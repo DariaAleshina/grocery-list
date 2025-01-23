@@ -21,7 +21,53 @@ let editElement;
 let editFlag = false;
 let editID = '';
 
+// grocery list array to store data
+let groceryListItemsArray = [];
+
 // ****** FUNCTIONS **********
+
+const setFormBackToDefaultSettings = function () {
+    groceryInput.value = '';
+    editFlag = false;
+    editID = '';
+    btnSubmit.textContent = 'add';
+}
+
+const renderItem = function (id, value) {
+    const html = `
+    <article class="grocery-item" data-id="${id}">
+        <p class="title">${value}</p>
+        <div class="btn-container">
+        <button type="button" class="edit-btn">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button type="button" class="delete-btn">
+            <i class="fas fa-trash"></i>
+        </button>
+        </div>
+    </article>
+    `;
+    groceryList.insertAdjacentHTML('beforeend', html);
+    groceryContainer.classList.add('show-container');
+}
+
+const getLocalStorage = function () {
+    const data = JSON.parse(localStorage.getItem('grocery-list'));
+    if (!data) return;
+    groceryListItemsArray = data;
+    groceryListItemsArray.forEach(item => {
+        renderItem(item.id, item.value);
+    });
+}
+
+const saveToDataStorage = function (id, value) {
+    localStorage.setItem('grocery-list', JSON.stringify(groceryListItemsArray));
+}
+
+const resetDataStorage = function () {
+    localStorage.removeItem('grocery-list');
+    location.reload();
+}
 
 const displayAlert = function (msg, color) {
     alert.textContent = msg;
@@ -36,27 +82,15 @@ const displayAlert = function (msg, color) {
 
 const addNewItemToTheList = function (id, value) {
     console.log('adding new item mode');
-    const html = `
-        <article class="grocery-item" data-id="${id}">
-            <p class="title">${value}</p>
-            <div class="btn-container">
-            <button type="button" class="edit-btn">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button type="button" class="delete-btn">
-                <i class="fas fa-trash"></i>
-            </button>
-            </div>
-        </article>
-    `;
-    groceryList.insertAdjacentHTML('beforeend', html);
-    displayAlert('item added to the list', 'green');
+    // display data
+    renderItem(id, value);
     groceryContainer.classList.add('show-container');
+    displayAlert('item added to the list', 'green');
 
-    // add to local storage
-    localStorage.setItem('grocery-list', JSON.stringify({ id: id, value: value }));
-
-    groceryInput.value = '';
+    // store data
+    groceryListItemsArray.push({ id: id, value: value })
+    saveToDataStorage(groceryListItemsArray);
+    setFormBackToDefaultSettings();
 }
 
 const addItem = function (event) {
@@ -78,14 +112,38 @@ const addItem = function (event) {
         console.log('editing mode');
     }
 
-
-
 }
+
+// setup app
+setFormBackToDefaultSettings();
+getLocalStorage();
 
 // ****** EVENT LISTENERS **********
 form.addEventListener('submit', addItem)
 
+// DELETE-EDIT BUTTON CLICk HANDLE
+groceryList.addEventListener('click', function (event) {
+    const clickedBtn = event.target.closest('button');
+    if (!clickedBtn) return;
 
+    const itemEl = event.target.closest('article');
+    const itemId = itemEl.dataset.id;
+
+    // if clicked delete
+    if (clickedBtn.classList.contains('delete-btn')) {
+        const index = groceryListItemsArray.findIndex(item => item.id === itemId);
+        groceryListItemsArray.splice(index, 1);
+        saveToDataStorage();
+        itemEl.remove();
+    }
+
+    // TODO: if clicked edit
+    if (clickedBtn.classList.contains('edit-btn')) {
+        console.log('to execute edit functionality');
+    }
+})
+
+btnClearAll.addEventListener('click', resetDataStorage)
 
 // ****** LOCAL STORAGE **********
 
