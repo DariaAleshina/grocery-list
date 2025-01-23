@@ -202,11 +202,11 @@ Grocery List
   letter-spacing: var(--spacing);
   text-transform: capitalize;
 }
-.alert-danger {
+.alert-red {
   color: #721c24;
   background: #f8d7da;
 }
-.alert-success {
+.alert-green {
   color: #155724;
   background: #d4edda;
 }
