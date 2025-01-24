@@ -17,7 +17,7 @@ const btnDelete = document.querySelector('.delete-btn');
 const btnClearAll = document.querySelector('.clear-btn');
 
 // edit option
-let editElement;
+// let editElement;
 let editFlag = false;
 let editID = '';
 
@@ -81,7 +81,6 @@ const displayAlert = function (msg, color) {
 }
 
 const addNewItemToTheList = function (id, value) {
-    console.log('adding new item mode');
     // display data
     renderItem(id, value);
     groceryContainer.classList.add('show-container');
@@ -93,7 +92,32 @@ const addNewItemToTheList = function (id, value) {
     setFormBackToDefaultSettings();
 }
 
-const addItem = function (event) {
+const editItem = function (editID, value) {
+    console.log('editItem funtion called');
+    console.log(editID);
+    // change data value in storage
+    const index = groceryListItemsArray.findIndex(item => item.id === editID);
+    groceryListItemsArray[index].value = value;
+    saveToDataStorage(groceryListItemsArray);
+
+    // display value & alert
+    document.querySelector(`[data-id="${editID}"]`).querySelector('.title').textContent = value;
+    displayAlert('item edited', 'green')
+    // set to default valuse
+    setFormBackToDefaultSettings();
+
+}
+
+const deleteElement = function (itemEl) {
+    const itemId = itemEl.dataset.id;
+    const index = groceryListItemsArray.findIndex(item => item.id === itemId);
+    groceryListItemsArray.splice(index, 1);
+    saveToDataStorage();
+    displayAlert(`item "${itemEl.textContent}" was deleted`, 'red');
+    itemEl.remove();
+};
+
+const submitForm = function (event) {
     event.preventDefault();
 
     const id = new Date().getTime().toString();
@@ -108,9 +132,7 @@ const addItem = function (event) {
     // check the mode
     if (!editFlag) addNewItemToTheList(id, value);
 
-    if (editFlag) {
-        console.log('editing mode');
-    }
+    if (editFlag) editItem(editID, value);
 
 }
 
@@ -119,7 +141,7 @@ setFormBackToDefaultSettings();
 getLocalStorage();
 
 // ****** EVENT LISTENERS **********
-form.addEventListener('submit', addItem)
+form.addEventListener('submit', submitForm)
 
 // DELETE-EDIT BUTTON CLICk HANDLE
 groceryList.addEventListener('click', function (event) {
@@ -127,19 +149,17 @@ groceryList.addEventListener('click', function (event) {
     if (!clickedBtn) return;
 
     const itemEl = event.target.closest('article');
-    const itemId = itemEl.dataset.id;
 
     // if clicked delete
-    if (clickedBtn.classList.contains('delete-btn')) {
-        const index = groceryListItemsArray.findIndex(item => item.id === itemId);
-        groceryListItemsArray.splice(index, 1);
-        saveToDataStorage();
-        itemEl.remove();
-    }
+    if (clickedBtn.classList.contains('delete-btn')) deleteElement(itemEl);
 
     // TODO: if clicked edit
     if (clickedBtn.classList.contains('edit-btn')) {
         console.log('to execute edit functionality');
+        editFlag = true;
+        groceryInput.value = itemEl.textContent;
+        btnSubmit.textContent = 'edit';
+        editID = itemEl.dataset.id;
     }
 })
 
