@@ -25,13 +25,13 @@ let groceryListItemsArray = [];
 
 // ****** FUNCTIONS **********
 
-const capitalizeWords = function (string) {
-    return string
-        .toLowerCase()
-        .split(" ")
-        .map(word => word[0].toUpperCase() + word.slice(1))
-        .join(" ");
-};
+const formatInput = string => string
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .split(" ")
+    .map(word => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
 
 const setFormBackToDefaultSettings = function () {
     groceryInput.value = '';
@@ -89,7 +89,7 @@ const displayAlert = function (msg, color) {
 
 const addNewItemToTheList = function (id, value) {
     // Capitalise incoming data
-    value = capitalizeWords(value);
+    value = formatInput(value);
 
     // Display data
     renderItem(id, value);
@@ -103,7 +103,7 @@ const addNewItemToTheList = function (id, value) {
 }
 
 const editItem = function (editID, value) {
-    value = capitalizeWords(value);
+    value = formatInput(value);
 
     // change data value in storage
     const index = groceryListItemsArray.findIndex(item => item.id === editID);
