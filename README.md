@@ -15,9 +15,3 @@ Incorporate unit tests to ensure better maintainability.
 
 **Refine the displayAlert Function**
 The displayAlert function exhibits odd behavior when multiple error alerts are triggered before the previous one finishes executing.
-
-**Fix the 'Edit' View**
-Address the issue of extra white space appearing in the input form when an item title is displayed for editing.
-
-**Enhance LocalStorage Implementation**
-Save user input to localStorage with all words capitalized for better formatting consistency.

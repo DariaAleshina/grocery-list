@@ -16,14 +16,22 @@ const btnEdit = document.querySelector('.edit-btn');
 const btnDelete = document.querySelector('.delete-btn');
 const btnClearAll = document.querySelector('.clear-btn');
 
-// edit option
+//  ****** EDIT VIEW **********
 let editFlag = false;
 let editID = '';
 
-// grocery list array to store data
+//  ****** STORE GROCERY DATA **********
 let groceryListItemsArray = [];
 
 // ****** FUNCTIONS **********
+
+const capitalizeWords = function (string) {
+    return string
+        .toLowerCase()
+        .split(" ")
+        .map(word => word[0].toUpperCase() + word.slice(1))
+        .join(" ");
+};
 
 const setFormBackToDefaultSettings = function () {
     groceryInput.value = '';
@@ -80,20 +88,23 @@ const displayAlert = function (msg, color) {
 }
 
 const addNewItemToTheList = function (id, value) {
-    // display data
+    // Capitalise incoming data
+    value = capitalizeWords(value);
+
+    // Display data
     renderItem(id, value);
     groceryContainer.classList.add('show-container');
     displayAlert('item added to the list', 'green');
 
-    // store data
+    // Store data
     groceryListItemsArray.push({ id: id, value: value })
     saveDataToLocalStorage();
     setFormBackToDefaultSettings();
 }
 
 const editItem = function (editID, value) {
-    console.log('editItem funtion called');
-    console.log(editID);
+    value = capitalizeWords(value);
+
     // change data value in storage
     const index = groceryListItemsArray.findIndex(item => item.id === editID);
     groceryListItemsArray[index].value = value;
@@ -155,9 +166,8 @@ groceryList.addEventListener('click', function (event) {
 
     // if clicked edit
     if (clickedBtn.classList.contains('edit-btn')) {
-        console.log('to execute edit functionality');
         editFlag = true;
-        groceryInput.value = itemEl.textContent;
+        groceryInput.value = itemEl.querySelector('.title').textContent;
         btnSubmit.textContent = 'edit';
         editID = itemEl.dataset.id;
     }
