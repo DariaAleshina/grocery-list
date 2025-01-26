@@ -17,7 +17,6 @@ const btnDelete = document.querySelector('.delete-btn');
 const btnClearAll = document.querySelector('.clear-btn');
 
 // edit option
-// let editElement;
 let editFlag = false;
 let editID = '';
 
@@ -51,7 +50,7 @@ const renderItem = function (id, value) {
     groceryContainer.classList.add('show-container');
 }
 
-const getLocalStorage = function () {
+const getDataFromLocalStorageAndRender = function () {
     const data = JSON.parse(localStorage.getItem('grocery-list'));
     if (!data) return;
     groceryListItemsArray = data;
@@ -60,7 +59,7 @@ const getLocalStorage = function () {
     });
 }
 
-const saveToDataStorage = function (id, value) {
+const saveDataToLocalStorage = function () {
     localStorage.setItem('grocery-list', JSON.stringify(groceryListItemsArray));
 }
 
@@ -73,11 +72,11 @@ const displayAlert = function (msg, color) {
     alert.textContent = msg;
     alert.classList.add(`alert-${color}`); // 'red' or 'green'
 
-    // remove alert in 4 sec
+    // remove alert in 1 sec 
     setTimeout(function () {
         alert.textContent = '';
         alert.classList.remove(`alert-${color}`);
-    }, 2000);
+    }, 1000);
 }
 
 const addNewItemToTheList = function (id, value) {
@@ -88,7 +87,7 @@ const addNewItemToTheList = function (id, value) {
 
     // store data
     groceryListItemsArray.push({ id: id, value: value })
-    saveToDataStorage(groceryListItemsArray);
+    saveDataToLocalStorage();
     setFormBackToDefaultSettings();
 }
 
@@ -98,7 +97,7 @@ const editItem = function (editID, value) {
     // change data value in storage
     const index = groceryListItemsArray.findIndex(item => item.id === editID);
     groceryListItemsArray[index].value = value;
-    saveToDataStorage(groceryListItemsArray);
+    saveDataToLocalStorage();
 
     // display value & alert
     document.querySelector(`[data-id="${editID}"]`).querySelector('.title').textContent = value;
@@ -112,7 +111,7 @@ const deleteElement = function (itemEl) {
     const itemId = itemEl.dataset.id;
     const index = groceryListItemsArray.findIndex(item => item.id === itemId);
     groceryListItemsArray.splice(index, 1);
-    saveToDataStorage();
+    saveDataToLocalStorage();
     displayAlert(`item "${itemEl.textContent}" was deleted`, 'red');
     itemEl.remove();
 };
@@ -136,14 +135,15 @@ const submitForm = function (event) {
 
 }
 
-// setup app
+// ****** INITIAL APP SETUP **********
 setFormBackToDefaultSettings();
-getLocalStorage();
+getDataFromLocalStorageAndRender();
 
 // ****** EVENT LISTENERS **********
+// Form Submission
 form.addEventListener('submit', submitForm)
 
-// DELETE-EDIT BUTTON CLICk HANDLE
+// Edit-Delete buttons click
 groceryList.addEventListener('click', function (event) {
     const clickedBtn = event.target.closest('button');
     if (!clickedBtn) return;
@@ -153,7 +153,7 @@ groceryList.addEventListener('click', function (event) {
     // if clicked delete
     if (clickedBtn.classList.contains('delete-btn')) deleteElement(itemEl);
 
-    // TODO: if clicked edit
+    // if clicked edit
     if (clickedBtn.classList.contains('edit-btn')) {
         console.log('to execute edit functionality');
         editFlag = true;
@@ -163,8 +163,5 @@ groceryList.addEventListener('click', function (event) {
     }
 })
 
+// Cleat-All button click
 btnClearAll.addEventListener('click', resetDataStorage)
-
-// ****** LOCAL STORAGE **********
-
-// ****** SETUP ITEMS **********
