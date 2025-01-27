@@ -15,3 +15,6 @@ Incorporate unit tests to ensure better maintainability.
 
 **Refine the displayAlert Function.**
 The displayAlert function exhibits odd behavior when multiple error alerts are triggered before the previous one finishes executing.
+
+**Refactor code adding Classes**
+Introduce private methods and fields to encapsulate internal logic and restrict direct access to them.
